@@ -1,5 +1,6 @@
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_render.h>
 #include <getopt.h>
-#include <iostream>
 
 #include "../headers/minesweeper.h"
 
@@ -91,6 +92,12 @@ int main(int argc, char *argv[])
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, rendering_flags);
 
+    if( TTF_Init() == -1 )
+    {
+        printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+        return -1;
+    }
+
     gamePtr = new Minesweeper(renderer);
     gamePtr->Init(width, height, cellSize, bombCount);
 
@@ -116,6 +123,12 @@ int main(int argc, char *argv[])
                     case(SDL_QUIT):
                     gamePtr->shouldClose = true;
                     break;
+                    case(SDL_MOUSEBUTTONDOWN):
+                    gamePtr->MouseDown(event.button);
+                    break;
+                    case(SDL_MOUSEBUTTONUP):
+                    gamePtr->MouseUp(event.button);
+                    break;
                 }
             }
 
@@ -129,8 +142,10 @@ int main(int argc, char *argv[])
         }
     }
 
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+    TTF_Quit();
 
     return 0;
 }
