@@ -38,4 +38,4 @@ Makefile
 *hidden*
 cmake_install.cmake
 bin/*
-CmakeFiles/*
+CMakeFiles/*

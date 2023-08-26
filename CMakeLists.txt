@@ -6,8 +6,8 @@ set(COMPILER_FLAGS -Ofast -fno-fast-math -Wall -c -s -fno-rtti -Wno-sign-compare
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-file(GLOB SOURCES *.cpp)
-file(GLOB HEADERS *.h)
+file(GLOB SOURCES sources/*.cpp)
+file(GLOB HEADERS headers/*.h)
 
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})

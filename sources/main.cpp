@@ -1,23 +1,21 @@
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_render.h>
 #include <getopt.h>
 #include <iostream>
 
-#include <SDL2/SDL.h>  
+#include "../headers/minesweeper.h"
 
-bool gameRender();
-bool gameLogic();
+Minesweeper* gamePtr;
 
 int main(int argc, char *argv[])
 {
     srand(time(nullptr));
     int fullScreen = false, vSync = false, unlocked = true, noSplash = true, customResolution = false, performance = false;
-    int frameCap = 30, c, width = 1280, height = 960;
+    int cellSize = 64, bombCount = 18, c, width = 1280, height = 960;
 
     while(true) {
-        const char *const short_opts = "w:h:c:fvunp";
+        const char *const short_opts = "w:h:c:b:fvunp";
         const struct option long_opts[] = {
-                {"frameCap",   required_argument, nullptr,     'c'},
+                {"cellSize",   required_argument, nullptr,     'c'},
+                {"bombCount",  required_argument, nullptr,     'b'},
                 {"fullScreen", no_argument,       &fullScreen, '\0'},
                 {"performance",no_argument,       &performance, '\0'},
                 {"vSync",      no_argument,       &vSync,      '\0'},
@@ -41,8 +39,10 @@ int main(int argc, char *argv[])
                         *long_opts[option_index].flag = true;
                     break;
                 case 'c':
-                    frameCap = (int)strtol(optarg, nullptr, 10);
-                    std::cout << "Capping the framerate is not yet supported, and as such the -c option is ignored." << std::endl;
+                    cellSize = (int)strtol(optarg, nullptr, 10);
+                    continue;
+                case 'b':
+                    bombCount = (int)strtol(optarg, nullptr, 10);
                     continue;
                 case 'w':
                     width = (int)strtol(optarg, nullptr, 10);
@@ -91,36 +91,36 @@ int main(int argc, char *argv[])
 
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, rendering_flags);
 
+    gamePtr = new Minesweeper(renderer);
+    gamePtr->Init(width, height, cellSize, bombCount);
+
     // deltaTime variables
     // -------------------
-    double deltaTime = 0.0f;
-    double lastFrame = 0.0f;
-    double frameTime = 0;
+    Uint64 NOW = SDL_GetPerformanceCounter();
+    Uint64 LAST = 0;
+    double deltaTime = 0;
 
-    bool gameIsRunning = true;
-
-    while(gameIsRunning) {
+    while(gamePtr->isRunning) {
         try {
+            LAST = NOW;
+            NOW = SDL_GetPerformanceCounter();
+
+            deltaTime = (double)((NOW - LAST)*1000 / (double)SDL_GetPerformanceFrequency() );
             
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+            SDL_SetRenderDrawColor(renderer, 120, 120, 120, SDL_ALPHA_OPAQUE);
             SDL_RenderClear(renderer);
 
             SDL_Event event;
             while (SDL_PollEvent(&event)) {
                 switch(event.type) {
                     case(SDL_QUIT):
-                    gameIsRunning = false;
+                    gamePtr->shouldClose = true;
                     break;
                 }
             }
 
-            if(!gameRender()) {
-                gameIsRunning = false;
-            }
-
-            if(!gameLogic()) {
-                gameIsRunning = false;
-            }
+            gamePtr->Tick(deltaTime);
+            gamePtr->Render(deltaTime);
 
             SDL_RenderPresent(renderer);
 
