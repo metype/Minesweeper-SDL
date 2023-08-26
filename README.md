@@ -10,13 +10,14 @@ Prerequisites:
 
 ### Linux:
 ```
-cd {Project Root Directory} 
+git clone https://github.com/metype/Minesweeper-SDL.git
+cd Minesweeper-SDL
 cmake ./ 
 make
 ```
 To run the compiled executable:
 ```
-cd {Project Root Directory}/bin
+cd bin
 ./Minesweeper
 ```
 
