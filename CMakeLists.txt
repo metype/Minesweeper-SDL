@@ -15,8 +15,8 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 find_package(SDL2 REQUIRED)
 
 if(TARGET SDL2::SDL2main)
-    # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
-    target_link_libraries(${PROJECT_NAME} SDL2::SDL2main)
+	# It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
+	target_link_libraries(${PROJECT_NAME} SDL2::SDL2main)
 endif()
 
 target_link_libraries(${PROJECT_NAME} SDL2::SDL2)
