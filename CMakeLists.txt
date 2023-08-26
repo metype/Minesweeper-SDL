@@ -1,9 +1,23 @@
 cmake_minimum_required(VERSION 3.18)
 project(Minesweeper)
 
+option(DEBUG "Compiles with debugging symbols.")
+
 set(CMAKE_CXX_STANDARD 20)
-set(COMPILER_FLAGS -Ofast -fno-fast-math -Wall -c -s -fno-rtti -Wno-sign-compare -Wfatal-errors)
-set(CMAKE_MODULE_PATH CMakeModules)
+
+if(DEBUG)
+	set(COMPILER_FLAGS -g -rdynamic)
+else()
+	# -Ofast enables a good handful of flags, some of these may cause issues
+	# So if you're getting hard-to-diagnose and downright strange bugs?
+	# maybe try disabling some of those flags 
+	# https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html#index-Ofast
+
+	# For this project it's strictly very unneccesary to be honest
+	set(COMPILER_FLAGS -Ofast -Wall -c -s -Wfatal-errors)
+endif()
+
+set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/CMakeModules")
 
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 

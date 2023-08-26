@@ -9,19 +9,15 @@ Minesweeper* gamePtr;
 int main(int argc, char *argv[])
 {
 	srand(time(nullptr));
-	int fullScreen = false, vSync = false, unlocked = true, noSplash = true, customResolution = false, performance = false;
-	int cellSize = 64, bombCount = 18, c, width = 1280, height = 960;
+	int vSync = false;
+	int cellSize = 64, bombCount = 24, c, width = 1280, height = 960;
 
 	while(true) {
-		const char *const short_opts = "w:h:c:b:fvunp";
+		const char *const short_opts = "w:h:c:b:fvp";
 		const struct option long_opts[] = {
 				{"cellSize",   required_argument, nullptr,     'c'},
 				{"bombCount",  required_argument, nullptr,     'b'},
-				{"fullScreen", no_argument,       &fullScreen, '\0'},
-				{"performance",no_argument,       &performance, '\0'},
 				{"vSync",      no_argument,       &vSync,      '\0'},
-				{"unlocked",   no_argument,       &unlocked,   'u'},
-				{"noSplash",   no_argument,       &noSplash,   'n'},
 				{"width",      required_argument, nullptr,     'w'},
 				{"height",     required_argument, nullptr,     'h'},
 		};
@@ -47,25 +43,12 @@ int main(int argc, char *argv[])
 					continue;
 				case 'w':
 					width = (int)strtol(optarg, nullptr, 10);
-					customResolution = true;
 					continue;
 				case 'h':
 					height = (int)strtol(optarg, nullptr, 10);
-					customResolution = true;
-					continue;
-				case 'f':
-					fullScreen = true;
 					continue;
 				case 'v':
 					vSync = true;
-//                    std::cout << "Toggling VSync is not yet supported, and as such the -v flag is ignored." << std::endl;
-					continue;
-				case 'u':
-					unlocked = true;
-					std::cout << "Capping the framerate is not yet supported, and as such the -u flag is ignored." << std::endl;
-					continue;
-				case 'n':
-					noSplash = true;
 					continue;
 				default:
 					break;

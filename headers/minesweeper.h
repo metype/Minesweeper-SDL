@@ -26,10 +26,10 @@ class Minesweeper {
 	hasRevealedSpace = false, hasFlaggedSpace = false, win = false,
 	lose = false;
 	int gridWidth, gridHeight, cellSize, bombCount;
-	SDL_Renderer* renderer;
-	TTF_Font* font = NULL;
-	uint16_t** grid;
-	uint16_t** bombCounts;
+	SDL_Renderer* renderer = nullptr;
+	TTF_Font* font = nullptr;
+	uint16_t** grid = nullptr;
+	uint16_t** bombCounts = nullptr;
 	LTexture numbers[7];
 	LTexture bomb;
 	LTexture flag; 
@@ -44,6 +44,7 @@ class Minesweeper {
 	void RevealGridTiles(int xPos, int yPos);
 	void MouseDown(SDL_MouseButtonEvent& event);
 	void MouseUp(SDL_MouseButtonEvent& event);
+	void ResetGame();
 
 	private:
 	bool loadFont();

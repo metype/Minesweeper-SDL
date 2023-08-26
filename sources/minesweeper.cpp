@@ -20,6 +20,7 @@ void Minesweeper::Init(unsigned int width, unsigned int height, unsigned int cel
 	this->gridWidth = int(width/cellSize);
 	this->gridHeight = int(height/cellSize);
 	this->cellSize = cellSize;
+	this->bombCount = bombCount;
 
 	loadFont();
 
@@ -31,6 +32,26 @@ void Minesweeper::Init(unsigned int width, unsigned int height, unsigned int cel
 	flag.loadFromRenderedText(font, renderer, "F", {0,0,0,255});
 	youWin.loadFromRenderedText(font, renderer, "You Won!", {20,255,20,255});
 	youLose.loadFromRenderedText(font, renderer, "You Lost!", {255,20,20,255});
+
+	ResetGame();
+}
+
+void Minesweeper::ResetGame() {
+	this->win = false;
+	this->lose = false;
+
+	if(grid != nullptr) {
+		for(int i=0; i < gridWidth; i++) {
+			delete[] grid[i];
+		}
+		delete[] grid;
+	}
+	if(bombCounts != nullptr) {
+		for(int i=0; i < gridWidth; i++) {
+			delete[] bombCounts[i];
+		}
+		delete[] bombCounts;
+	}
 
 	grid = new uint16_t*[this->gridWidth];
 	bombCounts = new uint16_t*[this->gridWidth];
@@ -46,20 +67,12 @@ void Minesweeper::Init(unsigned int width, unsigned int height, unsigned int cel
 		}
 	}
 
-	Vec2* bombPositions = new Vec2[bombCount];
-
-	for(int i=0; i<bombCount; i++){
-		bool invalidPosition = false;
-		do {
-			invalidPosition = false;
-			bombPositions[i] = {rand()%gridWidth, rand()%gridHeight};
-			for(int j = 0; j < i; j++) {
-				if((bombPositions[j].x == bombPositions[i].x && bombPositions[j].y == bombPositions[i].y) && i != j) {
-					invalidPosition |= true;
-				}
-			}
-		} while(invalidPosition && i > 0);
-		grid[bombPositions[i].x][bombPositions[i].y] |= BOMB;
+	for(int bombsPlaced = 0; bombsPlaced < bombCount;) {
+		int bombXPos = rand()%gridWidth;
+		int bombYPos = rand()%gridHeight;
+		if(grid[bombXPos][bombYPos] & BOMB) continue;
+		grid[bombXPos][bombYPos] |= BOMB;
+		bombsPlaced++;
 	}
 
 	for(int x = 0; x < this->gridWidth; x++){
@@ -74,8 +87,6 @@ void Minesweeper::Init(unsigned int width, unsigned int height, unsigned int cel
 			bombCounts[x][y] = bombCount;
 		}
 	}
-
-	delete[] bombPositions;
 }
 
 void Minesweeper::Tick(Uint64 dt) {
@@ -130,6 +141,13 @@ void Minesweeper::Tick(Uint64 dt) {
 			if(flaggedBombCount == bombCount) win = true;
 			if(onlyBombsCovered) win = true;
 		}
+	} else if((leftClick | rightClick) && !(hasRevealedSpace || hasFlaggedSpace)) {
+		ResetGame();
+		hasRevealedSpace = true;
+		hasFlaggedSpace = true;
+	} else if (!(leftClick | rightClick)) {
+		hasRevealedSpace = false;
+		hasFlaggedSpace = false;
 	}
 }
 
