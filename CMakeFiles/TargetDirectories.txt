@@ -1,0 +1,3 @@
+/run/media/emily/Bulk Storage/Minesweeper-SDL/CMakeFiles/Minesweeper.dir
+/run/media/emily/Bulk Storage/Minesweeper-SDL/CMakeFiles/edit_cache.dir
+/run/media/emily/Bulk Storage/Minesweeper-SDL/CMakeFiles/rebuild_cache.dir
